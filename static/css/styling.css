@@ -1,0 +1,9 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 25px;
+    padding: 10px;
+    background-color: #24252a;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+  }
