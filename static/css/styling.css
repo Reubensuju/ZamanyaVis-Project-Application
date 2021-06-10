@@ -7,3 +7,24 @@
     font-family: 'Montserrat', sans-serif;
     text-align: center;
   }
+
+#custom-button {
+  padding: 10px;
+  color: white;
+  background-color: #24252a;
+  border: 1px solid #000;
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 5px;
+  cursor: pointer;
+}
+  
+#custom-button:hover {
+  background-color: #4c5352;
+}
+  
+#custom-text {
+  margin-left: 10px;
+  font-family: sans-serif;
+  color: #aaa;
+}
+  
