@@ -3,7 +3,6 @@ const fileInput = document.querySelector('.fileInput');
 fileInput.addEventListener('change', () => {
   Papa.parse(fileInput.files[0], {
     download: true,
-    header: true,
     keepEmptyRows: false,
     skipEmptyLines: true,
     step: function(row) {
@@ -11,6 +10,8 @@ fileInput.addEventListener('change', () => {
     },
     complete: function(results) {
       console.log(data);
+      console.log(data[2][0])
     }
   });
 });
+

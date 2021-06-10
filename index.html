@@ -15,6 +15,7 @@
 <script src="https://www.papaparse.com/resources/js/papaparse.js"></script>
 <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
 <script src= "plugins/cal-heatmap-master/cal-heatmap.min.js"> </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 
 </head>
@@ -34,8 +35,24 @@
 <br>
   
 <div id="cal-heatmap"></div>
+<br>
 
+<div class="select-box" style="display:inline">
+  <select id="datatype">
+    <option value="Body">Body</option>
+    <option value="Foods">Foods</option>
+    <option value="Activities">Activities</option>
+    <option value="Sleep">Sleep</option>
+  </select>
+</div>
 
+<div class="select-box" style="display:inline">
+  <select id="attribute">
+    <option value="Weight">Weight</option>
+    <option value="BMI">BMI</option>
+    <option value="Fat">Fat</option>
+  </select>
+</div>
 
 </body>
 
@@ -43,6 +60,7 @@
 <script src= "static/js/tabular.js"> </script> 
 <script src= "static/js/heatmap_cal.js"> </script>
 <script src= "static/js/fileInput.js"> </script>
+<script src= "static/js/dropdown.js"> </script>
 
 
 </html>

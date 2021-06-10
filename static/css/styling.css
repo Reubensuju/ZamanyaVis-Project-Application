@@ -27,4 +27,30 @@
   font-family: sans-serif;
   color: #aaa;
 }
-  
+
+.select-box{
+  width: 300px;
+  position: relative;
+}
+.select-box select{
+  height: 42px;
+  padding: 10px 15px;
+  line-height: 18px;
+  font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 8px;
+  width: 20%;
+  border: 2px solid;
+  appearance: none;
+}
+.select-box:after{
+  content: "";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  margin-top: -4px;
+  border-top: 8px solid #ccc;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  pointer-events:none;
+}
