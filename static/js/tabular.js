@@ -3,13 +3,11 @@ var datatype;
 var attribute;
 var cal_data = {};
 
-
 var cal = new CalHeatMap();;
 generate_heatmap();
 
 const fileInput = document.querySelector('.fileInput');
 fileInput.addEventListener('change', () => {
-  data = [];
   Papa.parse(fileInput.files[0], {
     download: true,
     keepEmptyRows: false,
@@ -20,11 +18,28 @@ fileInput.addEventListener('change', () => {
     complete: function(results) {
       console.log(data);
       read_dropdown();
+      cal_data = {};
       iterate();
       cal = cal.destroy();
       generate_heatmap();
     }
   });
+});
+
+document.getElementById("datatype").addEventListener('change', function() {
+  read_dropdown();
+  cal_data = {};
+  iterate();
+  cal = cal.destroy();
+  generate_heatmap();
+});
+
+document.getElementById("attribute").addEventListener('change', function() {
+  read_dropdown();
+  cal_data = {};
+  iterate();
+  cal = cal.destroy();
+  generate_heatmap();
 });
 
 function read_dropdown() {
@@ -34,27 +49,39 @@ function read_dropdown() {
 
 function iterate() {
   var i, j;
-  for (i=0; i<data.length; i++) {
-    if(data[i][0] === datatype) {
+  var k=0;
+  while(k<data.length)
+  {
+    for (i=k; i<data.length; i++) {
+      if(data[i][0] === datatype) {
+        break;
+      }
+    }
+    if(i>=data.length) {
       break;
     }
-  }
-  i++;
-  for (j=0; j<data[i].length; j++) {
-    if(data[i][j] === attribute) {
-      break;
-    }
-  }
-  i++;
-  while(data[i][0] !== "") {
-    var date = data[i][0];
-    var datearray = date.split("-");
-    date = datearray[1] + '-' + datearray[0] + '-' + datearray[2];
-    var unixDate = new Date(date).getTime() / 1000
-    
-    cal_data[unixDate] = parseFloat(data[i][j].replace(/,/g, ''));
     i++;
+
+    for (j=0; j<data[i].length; j++) {
+      if(data[i][j] === attribute) {
+        break;
+      }
+    }
+    i++;
+
+    while(data[i][0] !== "") {
+      var date = data[i][0];
+      var datearray = date.split("-");
+      date = datearray[1] + '-' + datearray[0] + '-' + datearray[2];
+      var unixDate = new Date(date).getTime() / 1000
+      
+      cal_data[unixDate] = parseFloat(data[i][j].replace(/,/g, ''));
+      i++;
+    }
+    
+    k=i+1;
   }
+  
   console.log(JSON.stringify(cal_data));
 
 }
