@@ -8,8 +8,9 @@
     text-align: center;
   }
 
-#custom-button {
+.btn-dark {
   padding: 10px;
+  margin-bottom: 25px;
   color: white;
   background-color: #24252a;
   border: 1px solid #000;
@@ -18,7 +19,21 @@
   cursor: pointer;
 }
   
-#custom-button:hover {
+.btn-dark:hover {
+  background-color: #4c5352;
+}
+
+.btn-light {
+  padding: 10px;
+  color: white;
+  background-color: #778899;
+  border: 0px;
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 10px;
+  cursor: pointer;
+}
+  
+.btn-light:hover {
   background-color: #4c5352;
 }
   
@@ -54,3 +69,47 @@
   border-right: 6px solid transparent;
   pointer-events:none;
 }
+
+/*   Toggle Switch Styling   */
+
+.switch-container {
+  padding: 10px;
+  margin-left: 40px;
+  border: 2px solid #000;
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 10px;
+}
+
+/* The switch - the box around the slider */
+.switch input {
+  position: absolute;
+  opacity: 0;
+}
+
+.switch {
+  display: inline-block;
+  font-size: 20px; /* 1 */
+  height: 1em;
+  width: 2em;
+  background: #BDB9A6;
+  border-radius: 1em;
+}
+
+.switch .slider {
+  height: 1em;
+  width: 1em;
+  border-radius: 1em;
+  background: #FFF;
+  box-shadow: 0 0.1em 0.3em rgba(0,0,0,0.3);
+  -webkit-transition: all 300ms;
+     -moz-transition: all 300ms;
+          transition: all 300ms;
+}
+
+.switch input:checked + .slider {
+  -webkit-transform: translate3d(100%, 0, 0);
+     -moz-transform: translate3d(100%, 0, 0);
+          transform: translate3d(100%, 0, 0);
+}
+
+/*   End of Toggle Switch   */

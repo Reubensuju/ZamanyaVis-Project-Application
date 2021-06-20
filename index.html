@@ -27,10 +27,28 @@
 </div>
 <br>
   
-<div>
+<div style="display:inline">
   <input type="file" class="fileInput" id="real-file" hidden="hidden"/>
-  <button type="button" id="custom-button">CHOOSE A FILE</button>
+  <button type="button" class="btn-dark" id="chooseFile-button">CHOOSE A FILE</button>
   <span id="custom-text">No file chosen, yet.</span>
+</div>
+
+<div style="display:inline">
+  <button type="button" class="btn-dark" id="reset-button">RESET</button>
+</div>
+<br>
+
+<div>
+  <button type="button" class="btn-light" id="previous-button">< Previous</button>
+  <button type="button" class="btn-light" id="next-button">Next ></button>
+  
+  <div class="switch-container" style="display:inline">
+    <label class="switch">
+      <input type="checkbox" id="cal-display-type" onclick="changeCalDisplay()">
+      <div class="slider"></div>
+    </label>
+    <p id="cal-display-type-text" style="display:inline">Year View</p>
+  </div>
 </div>
 <br>
   

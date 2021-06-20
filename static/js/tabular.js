@@ -2,6 +2,8 @@ var data = [];
 var datatype;
 var attribute;
 var cal_data = {};
+var range = 12;
+var cellSize = 10;
 
 var cal = new CalHeatMap();;
 generate_heatmap();
@@ -36,6 +38,15 @@ document.getElementById("datatype").addEventListener('change', function() {
 
 document.getElementById("attribute").addEventListener('change', function() {
   read_dropdown();
+  cal_data = {};
+  iterate();
+  cal = cal.destroy();
+  generate_heatmap();
+});
+
+const resetBtn = document.getElementById("reset-button");
+resetBtn.addEventListener("click", function() {
+  data = [];
   cal_data = {};
   iterate();
   cal = cal.destroy();
@@ -86,6 +97,27 @@ function iterate() {
 
 }
 
+function changeCalDisplay() {
+  var checkBox = document.getElementById("cal-display-type");
+  var displayText = document.getElementById("cal-display-type-text");
+
+  if(displayText.innerHTML == "Year View"){
+    displayText.innerHTML = "Month View";
+  } else {
+    displayText.innerHTML = "Year View";
+  }
+  
+  if (checkBox.checked == true){
+    range = 3;
+    cellSize = 13;
+  } else {
+    range = 12;
+    cellSize = 10;
+  }
+  cal = cal.destroy();
+  generate_heatmap();
+}
+
 function generate_heatmap() {
   cal = new CalHeatMap();
 	cal.init({
@@ -94,7 +126,10 @@ function generate_heatmap() {
 	id : "graph_c",
 	domain : "month",			// Group data by month
 	subDomain : "day",			// Split each month by days
-	range : 12,					// Just display number of months
-	legend: [20, 40, 60, 80] 	// Custom threshold for the scale
+	range : range,					// Just display number of months
+  cellSize: cellSize,
+	previousSelector: "#previous-button",
+	nextSelector: "#next-button",
+  legend: [20, 40, 60, 80] 	// Custom threshold for the scale
   });
 }
