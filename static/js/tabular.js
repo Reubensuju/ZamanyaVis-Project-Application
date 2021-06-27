@@ -1,4 +1,6 @@
 var data = [];
+var highlight = [];
+var selected = [];
 var datatype;
 var attribute;
 var cal_data = {};
@@ -8,9 +10,10 @@ var cellSize = 10;
 var cal = new CalHeatMap();;
 generate_heatmap();
 
-const fileInput = document.querySelector('.fileInput');
+const fileInput = document.getElementById("real-file");
 fileInput.addEventListener('change', () => {
-  Papa.parse(fileInput.files[0], {
+for(var i = 0; i < fileInput.files.length; i++){
+  Papa.parse(fileInput.files[i], {
     download: true,
     keepEmptyRows: false,
     skipEmptyLines: true,
@@ -26,6 +29,7 @@ fileInput.addEventListener('change', () => {
       generate_heatmap();
     }
   });
+}
 });
 
 document.getElementById("datatype").addEventListener('change', function() {
@@ -118,6 +122,11 @@ function changeCalDisplay() {
   generate_heatmap();
 }
 
+function selected(date, nb) {
+  console.log(date);
+  console.log(nb);
+}
+
 function generate_heatmap() {
   cal = new CalHeatMap();
 	cal.init({
@@ -130,6 +139,67 @@ function generate_heatmap() {
   cellSize: cellSize,
 	previousSelector: "#previous-button",
 	nextSelector: "#next-button",
-  legend: [20, 40, 60, 80] 	// Custom threshold for the scale
+  highlight: highlight,
+  legend: [20, 40, 60, 80], 	// Custom threshold for the scale
+  onClick: function(date, nb) {
+    var clicked = new Date(date.toLocaleString("en-US", {year: "numeric"}), date.toLocaleString("en-US", {month: "numeric"})-1, date.toLocaleString("en-US", {day: "numeric"}))    
+
+    if(!!highlight.find(item => {return item.getTime() == clicked.getTime()})) {
+      highlight.splice(highlight.map(Number).indexOf(+clicked), 1)
+    } else {
+      highlight.push(clicked);
+    }
+    
+    console.log(highlight);
+    cal = cal.destroy();
+    generate_heatmap();
+  }
   });
 }
+
+
+/*------------------*/
+
+
+const tagContainer = document.querySelector('.tag-container');
+
+tags = ["R", "S"];
+
+function createTag(label) {
+  const div = document.createElement('div');
+  div.setAttribute('class', 'tag');
+  const span = document.createElement('span');
+  span.innerHTML = label;
+  const closeIcon = document.createElement('i');
+  closeIcon.innerHTML = 'close';
+  closeIcon.setAttribute('class', 'material-icons');
+  closeIcon.setAttribute('data-item', label);
+  div.appendChild(span);
+  div.appendChild(closeIcon);
+  return div;
+}
+
+function clearTags() {
+  document.querySelectorAll('.tag').forEach(tag => {
+    tag.parentElement.removeChild(tag);
+  });
+}
+
+function addTags() {
+  clearTags();
+  tags.slice().reverse().forEach(tag => {
+    tagContainer.prepend(createTag(tag));
+  });
+}
+
+addTags();
+
+document.addEventListener('click', (e) => {
+  console.log(e.target.tagName);
+  if (e.target.tagName === 'I') {
+    const tagLabel = e.target.getAttribute('data-item');
+    const index = tags.indexOf(tagLabel);
+    tags = [...tags.slice(0, index), ...tags.slice(index+1)];
+    addTags();    
+  }
+})
