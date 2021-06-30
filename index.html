@@ -9,6 +9,7 @@
 
 <!-- included js libraries and css file -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
 <link rel="stylesheet" href="plugins/cal-heatmap-master/cal-heatmap.css">
 <link rel="stylesheet" href="static/css/styling.css">
 
@@ -23,26 +24,22 @@
 
 
 <div class="header">
-  <h2 style="width:100%;text-align:center;color:white;">ZamanyaVis: Online Lifestyle Explorer</h2>
+  <h2 style="width:100%;text-align:center;">ZamanyaVis: Online Lifestyle Explorer</h2>
 </div>
 <br>
 
 
 <div style="display:inline">
   <input type="file" class="fileInput" id="real-file" hidden="hidden" multiple="true"/>
-  <button type="button" class="btn-dark" id="chooseFile-button">UPLOAD YOUR FILES</button>
+  <button type="button" class="btn-light" id="chooseFile-button">Upload Your Files</button>
   <span id="custom-text">No file chosen, yet.</span>
 </div>
 
 
 <div style="display:inline">
-  <button type="button" class="btn-dark" id="reset-button">RESET</button>
+  <button type="button" class="btn-light" id="reset-button">Reset Files</button>
 </div>
 <br>
-
-<div class="container">
-  <div class="tag-container"></div>
-</div>
 <br>
 
 <div>
@@ -51,15 +48,14 @@
   
   <div class="switch-container" style="display:inline">
     <label class="switch">
-      <input type="checkbox" id="cal-display-type" onclick="changeCalDisplay()">
+      <input type="checkbox" id="cal-display-type" onclick=changeCalDisplay()>
       <div class="slider"></div>
     </label>
     <p id="cal-display-type-text" style="display:inline">Year View</p>
   </div>
+
+  <button type="button" class="btn-light" id="reset-selection-button">Reset Selection</button>
 </div>
-<br>
-  
-<div id="cal-heatmap"></div>
 <br>
 
 <div class="select-box" style="display:inline">
@@ -78,6 +74,32 @@
     <option value="Fat">Fat</option>
   </select>
 </div>
+<br>
+<br>
+  
+<div id="cal-heatmap"></div>
+<br>
+
+<div class="rangeSelection-container">
+  <div class="rangeSelection-header" style="display:inline">
+    <label class="check"> 
+      <input type="checkbox" id="range-select" onclick=rangeSelect()>
+      <span class="rangeSelection-text">Range Selection</span>
+    </label>
+  </div>
+  
+  <div id="inner2">
+    <p id="start-text" style="display:inline-block;;">Start Date: </p>
+    <p id="start-date" class="shadeBox" style="display:inline-block">-select-</p>
+    <p id="end-text" style="display:inline-block">End Date: </p>
+    <p id="end-date" class="shadeBox" style="display:inline-block;">-select-</p>
+    <button type="button" class="btn-light" id="highlight-button" style="display:inline-block;" onclick=highlightSelected()>Highlight</button>
+  </div>
+
+  <div id="inner3">
+  </div>
+</div>
+<br>
 
 </body>
 
