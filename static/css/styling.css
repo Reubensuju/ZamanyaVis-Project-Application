@@ -7,7 +7,11 @@
     background-color: #24252a;
     font-family: 'Montserrat', sans-serif;
     text-align: center;
-  }
+}
+
+label {
+  font-family: 'Montserrat', sans-serif;
+}
 
 .btn-dark {
   padding: 10px;
@@ -233,3 +237,21 @@
 }
 
 /*   End of Tag Container   */
+
+/*   Scatterplot Styling   */
+
+.chart .domain {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.xAxis path,
+.yAxis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+  stroke-width: 3px;
+}
+
+/*   End of Scatterplot   */
