@@ -22,6 +22,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
 
 
 </head>
@@ -59,7 +60,14 @@
     <p id="cal-display-type-text" style="display:inline">Year View</p>
   </div>
 
-  <button type="button" class="btn-light" id="reset-selection-button">Reset Selection</button>
+  <div class="rangeSelection-container" style="display:inline">
+      <label class="check"> 
+        <input type="checkbox" id="range-select" onclick=rangeSelect()>
+        <span class="rangeSelection-text">Range Selection</span>
+      </label>
+  </div>
+
+  <button type="button" class="btn-light" id="reset-selection-button" onclick=resetSelection()>Reset Selection</button>
 </div>
 <br>
 
@@ -128,28 +136,14 @@
  
 <div style="display:inline; float: left;">
   <div id="cal-heatmap"></div>
-
-  <div class="rangeSelection-container">
-    <div class="rangeSelection-header" style="display:inline">
-      <label class="check"> 
-        <input type="checkbox" id="range-select" onclick=rangeSelect()>
-        <span class="rangeSelection-text">Range Selection</span>
-      </label>
-    </div>
-    
-    <div>
-      <p id="start-text" style="display:inline-block;;">Start Date: </p>
-      <p id="start-date" class="shadeBox" style="display:inline-block">-select-</p>
-      <p id="end-text" style="display:inline-block">End Date: </p>
-      <p id="end-date" class="shadeBox" style="display:inline-block;">-select-</p>
-      <button type="button" class="btn-light" id="highlight-button" style="display:inline-block;" onclick=highlightSelected()>Highlight</button>
-    </div>
-  </div>
 </div>
 
-<div id="scatterplot" style="display:inline; margin-left: 70px;"><!-- svg will go here --></div>
-<br>
+<div id="scatterplot" style="height: 400px; width: 800px; float: right; margin-right: 60px;"></div>
 
+<!--
+<div id="scatterplot" style="display:inline; margin-right: 200px; float: right;"></div>
+<br>
+-->
 
 <br>
 

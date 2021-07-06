@@ -137,21 +137,14 @@ label {
   padding: 10px;
   margin-left: 10px;
   margin-right: 40px;
-  width: 530px;
   font-family: 'Montserrat', sans-serif;
-  border-radius: 30px;
-  display:flex;
-  flex-direction: column;
-}
-
-.rangeSelection-header {
-  text-align: center;
+  border-radius: 10px;
 }
 
 .check {
   cursor: pointer;
   color: #383A3F;
-  display: block;
+  display: inline-block;
   margin-bottom: 10px;
   font-family: 'Montserrat', sans-serif;
 }

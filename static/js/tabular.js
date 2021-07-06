@@ -4,8 +4,12 @@ var selected = [];
 var datatype, datatype_x, datatype_y;
 var attribute, attribute_x, attribute_y;
 var cal_data = {};
+var scatter_data = [];
+var date_array = [];
 var range = 12;
 var cellSize = 10;
+var startDate = "-select-", endDate = "-select-";
+var leg1=20, leg2=40, leg3=60, leg4=80;
 
 var cal = new CalHeatMap();;
 generate_heatmap();
@@ -56,15 +60,27 @@ resetBtn.addEventListener("click", function() {
   iterate();
   cal = cal.destroy();
   generate_heatmap();
+  scatter_data = [];
+  create_scatter();
 });
 
-const resetSelectionBtn = document.getElementById("reset-selection-button");
-resetSelectionBtn.addEventListener("click", function() {
+function resetSelection() {
   highlight = [];
   selected = [];
   cal = cal.destroy();
   generate_heatmap();
-});
+
+  document.getElementById("range-select").checked = false;
+  rangeSelect();
+
+  var chart = $('#scatterplot').highcharts();
+  var points = chart.getSelectedPoints();
+  if (points.length > 0) {
+      Highcharts.each(points, function (point) {
+          point.select(false);
+      });
+  }
+}
 
 function read_dropdown() {
   datatype = document.getElementById("datatype").value;
@@ -105,6 +121,14 @@ function iterate() {
     
     k=i+1;
   }
+
+  var obj = Object.keys(cal_data).map(function(key) { return cal_data[key];});
+  var min = Math.min.apply( null, obj );
+  var max = Math.max.apply( null, obj );
+  leg1 = ((max - min)*1)/5 + min;
+  leg2 = ((max - min)*2)/5 + min;
+  leg3 = ((max - min)*3)/5 + min;
+  leg4 = ((max - min)*4)/5 + min;
   
   console.log(JSON.stringify(cal_data));
 
@@ -120,19 +144,34 @@ function generate_heatmap() {
 	subDomain : "day",			// Split each month by days
 	range : range,					// Just display number of months
   cellSize: cellSize,
+  animationDuration: 0,
 	previousSelector: "#previous-button",
 	nextSelector: "#next-button",
   highlight: highlight,
-  legend: [20, 40, 60, 80], 	// Custom threshold for the scale
+  legend: [leg1, leg2, leg3, leg4], 	// Custom threshold for the scale
+  label: {
+		width: 210
+	},
   onClick: function(date, nb) {
     if (document.querySelector('#range-select:checked') !== null) {
-      var startDate = document.getElementById("start-date");
-      var endDate = document.getElementById("end-date");
       
-      if (startDate.innerHTML == "-select-") {
-        startDate.innerHTML = date.toLocaleString("en-US", {day: "numeric"}).concat("-", date.toLocaleString("en-US", {month: "numeric"}), "-", date.toLocaleString("en-US", {year: "numeric"}));
-      } else if (endDate.innerHTML == "-select-") {
-        endDate.innerHTML = date.toLocaleString("en-US", {day: "numeric"}).concat("-", date.toLocaleString("en-US", {month: "numeric"}), "-", date.toLocaleString("en-US", {year: "numeric"}));
+      if (startDate == "-select-") {
+        startDate = date.toLocaleString("en-US", {day: "numeric"}).concat("-", date.toLocaleString("en-US", {month: "numeric"}), "-", date.toLocaleString("en-US", {year: "numeric"}));
+        
+        var clicked = new Date(date.toLocaleString("en-US", {year: "numeric"}), date.toLocaleString("en-US", {month: "numeric"})-1, date.toLocaleString("en-US", {day: "numeric"}))    
+
+        if(!highlight.find(item => {return item.getTime() == clicked.getTime()})) {
+          highlight.push(clicked);
+        }
+
+        console.log(highlight);
+        cal = cal.destroy();
+        generate_heatmap();
+
+      } else if (endDate == "-select-") {
+        endDate = date.toLocaleString("en-US", {day: "numeric"}).concat("-", date.toLocaleString("en-US", {month: "numeric"}), "-", date.toLocaleString("en-US", {year: "numeric"}));
+
+        highlightSelected();
       }
       
     } else {
@@ -147,6 +186,8 @@ function generate_heatmap() {
       console.log(highlight);
       cal = cal.destroy();
       generate_heatmap();
+
+      highlightScatter(date.toLocaleString("en-US", {day: "numeric"}).concat("-",date.toLocaleString("en-US", {month: "numeric"}), "-", date.toLocaleString("en-US", {year: "numeric"})).replace(/\b\d\b/g, '0$&'));
     }
 
   }
@@ -165,7 +206,7 @@ function changeCalDisplay() {
   
   if (checkBox.checked == true){
     range = 3;
-    cellSize = 13;
+    cellSize = 15;
   } else {
     range = 12;
     cellSize = 10;
@@ -176,11 +217,9 @@ function changeCalDisplay() {
 
 function rangeSelect() {
   if (document.querySelector('#range-select:checked') == null) {
-    var startDate = document.getElementById("start-date");
-    var endDate = document.getElementById("end-date");
 
-    startDate.innerHTML = "-select-";
-    endDate.innerHTML = "-select-";
+    startDate = "-select-";
+    endDate = "-select-";
   }
 }
 
@@ -191,14 +230,17 @@ Date.prototype.addDays = function(days) {
 }
 
 function highlightSelected() {
-  var startDate = document.getElementById("start-date").innerHTML.split("-");
-  var endDate = document.getElementById("end-date").innerHTML.split("-");
-  var currentDate = new Date(startDate[2], startDate[1]-1, startDate[0]);
-  var stopDate = new Date(endDate[2], endDate[1]-1, endDate[0]);
+  var start = startDate.split("-");
+  var end = endDate.split("-");
+  var currentDate = new Date(start[2], start[1]-1, start[0]);
+  var stopDate = new Date(end[2], end[1]-1, end[0]);
   while (currentDate <= stopDate) {
     if(!highlight.find(item => {return item.getTime() == currentDate.getTime()})) {
       highlight.push(currentDate);
     }
+
+    highlightScatter(currentDate.toLocaleString("en-US", {day: "numeric"}).concat("-",currentDate.toLocaleString("en-US", {month: "numeric"}), "-", currentDate.toLocaleString("en-US", {year: "numeric"})).replace(/\b\d\b/g, '0$&'));
+    
     currentDate = currentDate.addDays(1);
   }
 
@@ -206,11 +248,8 @@ function highlightSelected() {
   cal = cal.destroy();
   generate_heatmap();
 
-  var startDate = document.getElementById("start-date");
-  var endDate = document.getElementById("end-date");
-
-  startDate.innerHTML = "-select-";
-  endDate.innerHTML = "-select-";
+  startDate = "-select-";
+  endDate = "-select-";
 }
 
 /*------------------*/
@@ -219,7 +258,7 @@ function highlightSelected() {
 // ####################################
 // ########## CREATE DATASET ##########
 // ####################################
-
+/*
 // define a javascript object to hold our dataset
 var dataset = {
   // points will be x,y coordinates
@@ -232,7 +271,7 @@ var dataset = {
   minY: 0,
   maxY: 1000
 }
-
+*/
 function read_scatter_dropdown() {
   var xDropdown = document.getElementById("myList_1").value.split("-");
   datatype_x = xDropdown[0];
@@ -246,6 +285,7 @@ function iterate_scatter(datatype, attribute) {
   var i, j;
   var k=0;
   var axis_array = [];
+  date_array = [];
   while(k<data.length)
   {
     for (i=k; i<data.length; i++) {
@@ -268,16 +308,18 @@ function iterate_scatter(datatype, attribute) {
     while(data[i][0] !== "") {
       var index = parseFloat(data[i][j].replace(/,/g, ''));
       axis_array.push(index);
+      var date = data[i][0];
+      date_array.push(date);
       i++;
     }
     
     k=i+1;
   }
-
+  
   return axis_array;
 
 }
-
+/*
 function generateScatterPoints(dataset, x_array, y_array) {
   dataset.points = [];
 
@@ -298,22 +340,120 @@ function generateScatterPoints(dataset, x_array, y_array) {
     })
   }
 }
+*/
+
+function generateScatterPoints(x_array, y_array) {
+  scatter_data = [];
+  for (var i = 0; i < x_array.length; i++) {
+    scatter_data[i] = [x_array[i], y_array[i]];
+  }
+}
 
 document.getElementById("myList_1").addEventListener('change', function() {
   generate_scatterplot();
+  resetSelection();
 });
 
 document.getElementById("myList_2").addEventListener('change', function() {
   generate_scatterplot();
+  resetSelection();
 });
 
 function generate_scatterplot() {
   read_scatter_dropdown();
   var x_array = iterate_scatter(datatype_x, attribute_x);
   var y_array = iterate_scatter(datatype_y, attribute_y);
-  generateScatterPoints(dataset, x_array, y_array);
-  updateChart();  
+  generateScatterPoints(x_array, y_array);
+  create_scatter();  
 }
+
+
+
+/**
+ * Custom selection handler that selects points and cancels the default zoom behaviour
+ */
+ function selectPointsByDrag(e) {
+
+  // Select points
+  Highcharts.each(this.series, function (series) {
+      Highcharts.each(series.points, function (point) {
+          if (point.x >= e.xAxis[0].min && point.x <= e.xAxis[0].max &&
+                  point.y >= e.yAxis[0].min && point.y <= e.yAxis[0].max) {
+              point.select(true, true);
+          }
+      });
+  });
+
+  var points = this.getSelectedPoints();
+  console.log(points);
+  for (var i = 0; i < points.length; i++) {
+    var date = date_array[points[i].index].split("-");
+    var currentDate = new Date(date[2], date[1]-1, date[0]);
+    highlight.push(currentDate);
+  }
+  cal = cal.destroy();
+  generate_heatmap();
+
+  return false; // Don't zoom
+}
+
+/**
+* On click, unselect all points
+*/
+function unselectByClick() {
+  var points = this.getSelectedPoints();
+  if (points.length > 0) {
+      Highcharts.each(points, function (point) {
+          point.select(false);
+      });
+  }
+}
+
+function highlightScatter(selected) {
+  var chart = $('#scatterplot').highcharts();
+  var points = chart.series[0].data;
+  /*console.log(points);
+  console.log(date_array);
+  console.log(selected);*/
+
+  for (var i = 0; i < date_array.length; i++) {
+    if(date_array[i] === selected) {
+      break;
+    }
+  }
+  if (i < date_array.length)
+  {
+    points[i].select(true, true);;
+  }
+}
+
+function create_scatter() {
+Highcharts.chart('scatterplot', {
+
+  title: {
+      text: null
+  },
+
+  chart: {
+      type: 'scatter',
+      events: {
+          selection: selectPointsByDrag,
+          /*click: unselectByClick*/
+      },
+      zoomType: 'xy'
+  },
+
+  series: [{
+      data: scatter_data,
+      allowPointSelect: false,
+      showInLegend: false
+  }]
+});
+}
+
+create_scatter();
+
+/*
 
 // define a function to randomly generate data for our scatterplot
 var generateRandomPoints = function(dataset) {
@@ -356,7 +496,7 @@ generateRandomPoints(dataset);
 
 // Define SVG size and padding (extra white space to prevent overlap).
 var width = 600;
-var height = 250;
+var height = 400;
 var padding = { // buffer used to prevent chart element overlap
   top: 20,
   right: 25,
@@ -540,3 +680,4 @@ var updateChart = function() {
 // run updateChart to plot initial set of points
 updateChart();                    
 
+*/
