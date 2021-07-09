@@ -72,7 +72,7 @@ label {
   line-height: 18px;
   font-family: 'Montserrat', sans-serif;
   border-radius: 8px;
-  width: 15%;
+  width: 35%;
   border: 2px solid;
   appearance: none;
 }
@@ -133,7 +133,7 @@ label {
 
 /*   Range Selection Styling   */
 
-.rangeSelection-container {
+.Selection-container {
   padding: 10px;
   margin-left: 10px;
   margin-right: 40px;
@@ -148,13 +148,13 @@ label {
   margin-bottom: 10px;
   font-family: 'Montserrat', sans-serif;
 }
-.check input[type=checkbox] + .rangeSelection-text:hover:before {
+.check input[type=checkbox] + .Selection-text:hover:before {
   color: #5ad17e;
 }
 .check input[type=checkbox] {
   display: none;
 }
-.check input[type=checkbox] + .rangeSelection-text:before {
+.check input[type=checkbox] + .Selection-text:before {
   content: "";
   color: black;
   font-family: "fontAwesome";
@@ -163,12 +163,12 @@ label {
   display: inline-block;
   margin-right: 5px;
 }
-.check input[type=checkbox]:checked + .rangeSelection-text:before {
+.check input[type=checkbox]:checked + .Selection-text:before {
   content: "";
   color: #5ad17e;
   animation: tick 150ms ease-in;
 }
-.check input[type=checkbox]:disabled + .rangeSelection-text:before {
+.check input[type=checkbox]:disabled + .Selection-text:before {
   content: "";
   color: #dddfe6;
 }

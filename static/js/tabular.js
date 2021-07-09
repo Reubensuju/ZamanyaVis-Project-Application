@@ -10,6 +10,8 @@ var range = 12;
 var cellSize = 10;
 var startDate = "-select-", endDate = "-select-";
 var leg1=20, leg2=40, leg3=60, leg4=80;
+var dataTable = [];
+var tsnePROJ = [];
 
 var cal = new CalHeatMap();;
 generate_heatmap();
@@ -254,24 +256,6 @@ function highlightSelected() {
 
 /*------------------*/
 
-// /*
-// ####################################
-// ########## CREATE DATASET ##########
-// ####################################
-/*
-// define a javascript object to hold our dataset
-var dataset = {
-  // points will be x,y coordinates
-  points: [],
-  numPoints: 25,
-  color: "green",
-  radius: 3,
-  minX: 0,
-  maxX: 500,
-  minY: 0,
-  maxY: 1000
-}
-*/
 function read_scatter_dropdown() {
   var xDropdown = document.getElementById("myList_1").value.split("-");
   datatype_x = xDropdown[0];
@@ -319,28 +303,6 @@ function iterate_scatter(datatype, attribute) {
   return axis_array;
 
 }
-/*
-function generateScatterPoints(dataset, x_array, y_array) {
-  dataset.points = [];
-
-  var xValues = Array.from({
-      length: dataset.numPoints
-    }, () => Math.random() *
-    dataset.maxX + dataset.minX);
-
-  var yValues = Array.from({
-      length: dataset.numPoints
-    }, () => Math.random() *
-    dataset.maxY + dataset.minY);
-
-  for (var i = 0; i < x_array.length; i++) {
-    dataset.points.push({
-      x: x_array[i],
-      y: y_array[i]
-    })
-  }
-}
-*/
 
 function generateScatterPoints(x_array, y_array) {
   scatter_data = [];
@@ -352,11 +314,13 @@ function generateScatterPoints(x_array, y_array) {
 document.getElementById("myList_1").addEventListener('change', function() {
   generate_scatterplot();
   resetSelection();
+  document.getElementById("tsne-select").checked = false;
 });
 
 document.getElementById("myList_2").addEventListener('change', function() {
   generate_scatterplot();
   resetSelection();
+  document.getElementById("tsne-select").checked = false;
 });
 
 function generate_scatterplot() {
@@ -412,9 +376,6 @@ function unselectByClick() {
 function highlightScatter(selected) {
   var chart = $('#scatterplot').highcharts();
   var points = chart.series[0].data;
-  /*console.log(points);
-  console.log(date_array);
-  console.log(selected);*/
 
   for (var i = 0; i < date_array.length; i++) {
     if(date_array[i] === selected) {
@@ -449,235 +410,95 @@ Highcharts.chart('scatterplot', {
       showInLegend: false
   }]
 });
+
+var xDropdown = document.getElementById("myList_1").value;
+var yDropdown = document.getElementById("myList_2").value;
+
+var chart = $('#scatterplot').highcharts();
+chart.xAxis[0].setTitle({ text: xDropdown });
+chart.yAxis[0].setTitle({ text: yDropdown });
 }
 
 create_scatter();
 
-/*
+/*    TSNE GENERATION   */
 
-// define a function to randomly generate data for our scatterplot
-var generateRandomPoints = function(dataset) {
-  // datapoints should take the format { x: value, y: value }
-  dataset.points = [];
-  // shorthand way to randomly generate an array of values
-  // Array.from({length: $n}, () => Math.random() * $upperBound + $lowerBound);
-  // math.random generates a random num between 0 and 1
+function tsneGenerate() {
+  if (document.querySelector('#tsne-select:checked') == null) {
+    generate_scatterplot();
+  } else {
+    iterate_tsne();
+    tsneDraw();
+    scatter_data = tsnePROJ;
+    create_scatter();
+    resetSelection();
 
-  var xValues = Array.from({
-      length: dataset.numPoints
-    }, () => Math.random() *
-    dataset.maxX + dataset.minX);
-
-  var yValues = Array.from({
-      length: dataset.numPoints
-    }, () => Math.random() *
-    dataset.maxY + dataset.minY);
-
-  for (var i = 0; i < xValues.length; i++) {
-    dataset.points.push({
-      x: xValues[i],
-      y: yValues[i]
-    })
+    var chart = $('#scatterplot').highcharts();
+    chart.xAxis[0].setTitle({ text: "Values" });
+    chart.yAxis[0].setTitle({ text: "Values" });
   }
 }
 
-// run the function to actually generate our x,y coordianates 
-generateRandomPoints(dataset);
+function iterate_tsne() {
+  var i, j;
+  var k=0, l=0;
+  dataTable = [];
+  while(k<data.length)
+  {
+    for (i=k; i<data.length; i++) {
+      if(!isNaN(parseInt(data[i][0]))) {
+        break;
+      }
+    }
+    if(i>=data.length) {
+      break;
+    }
 
-// /*
-// ########################################################################
-// ##### This is where D3 gets extremely dense with function chaining #####
-// ########################################################################
-
-
-// ####################################
-// ######### DEFINE D3 SCALES #########
-// ####################################
-
-// Define SVG size and padding (extra white space to prevent overlap).
-var width = 600;
-var height = 400;
-var padding = { // buffer used to prevent chart element overlap
-  top: 20,
-  right: 25,
-  bottom: 30,
-  left: 60
+    while(data[i][0] !== "") {
+      for (l=0; l<dataTable.length; l++) {
+        if (dataTable[l][0] == data[i][0]) {
+          break;
+        }
+      }
+      if(l===dataTable.length) {
+        dataTable.push(data[i].filter(item => item));
+      } else {
+        for (j=1; j<data[i].length; j++) {
+          if (data[i][j] !== "") {
+            dataTable[l].push(data[i][j].replace(/,/g, ''));
+          }
+        }
+      }
+      i++;
+    }
+    
+    k=i+1;
+  }
+  for (var i = 0; i < dataTable.length; i++) {
+    dataTable[i] = dataTable[i].slice(1);
+  }
+  for (var i = 0; i < dataTable.length; i++) {
+    dataTable[i] = dataTable[i].map((i) => Number(i));
+  }
+  
 }
 
-// D3 scales are used to translate your numerical data into svg space
+function tsneDraw() {
+  // ################################################################
+  //tsne -similarity  // length of data table 
+  // dataTable //contains the data
+  // ################################################################
+  
+  var opt = { epsilon: 10 }; // epsilon is learning rate (10 = default)
+  var tsne = new tsnejs.tSNE(opt); // create a tSNE instance
 
-// define scales
-var xScale = d3.scale.linear()                    // predefined d3 function to create scale
-  .domain([dataset.minX, dataset.maxX])           // domain defines the coordinate system of your data
-  .range([padding.left, width - padding.right]);  // range defines the coordinate system of your svg
+  console.log(dataTable);
+  tsne.initDataRaw(dataTable);
 
-var yScale = d3.scale.linear()
-  .domain([dataset.minY, dataset.maxY])
-  .range([height - padding.bottom, padding.top]); // notice that the larger value is the first listed 
-                                                  // in the yScale range. 
+  for (var k = 0; k < 500; k++) {
+    tsne.step(); // every time you call this, solution gets better
+  }
 
-// define axis behavior in D3
-var xAxis = d3.svg.axis()                         // the d3 axis object
-  .scale(xScale)                                  // set the scale to what we just defined
-  .orient("bottom")                               // orient tick direction
-  .ticks(5);                                      // try to do 5 ticks. Won't always be this many
-
-var yAxis = d3.svg.axis()
-  .scale(yScale)
-  .orient('left')
-  .ticks(5);
-// /*
-
-// ####################################
-// ######## BUILD SVG USING D3 ########
-// ####################################
-
-// Use D3 to insert an SVG element into our HTML document
-var svg = d3.select('#scatterplot')     // grab the <div> tag which has the id #svgcontainer
-  .append('svg')                      // append an <svg> tag into this container
-  .attr('width', width)               // set the svg's width attribute
-  .attr('height', height);            // set the svg's height attribute
-
-// /*
-// actually insert x axis into html
-svg.append('g')                               // new group element
-  .attr('class', 'xAxis')                     // give it the css class 'xAxis'
-  .attr('transform', 'translate' +
-    '(0,' + (height - padding.bottom) + ')')  // translate the axis to the bottom of the svg
-  .call(xAxis);                               // refer to axis variables to define scale behavior
-
-
-svg.append('g')
-  .attr('class', 'yAxis')
-  .attr('transform', 'translate(' + padding.left + ',' + 0 + ')')
-  .call(yAxis);
-
-// /*
-// ####################################
-// ######### Helper Functions #########
-// ####################################
-
-// event handlers for interactivity
-var handleMouseOver = function(d, i) {
-  // Use D3 to select element, change color and size
-    d3.select(this).attr({
-      fill: "orange",
-      r: dataset.radius * 2
-    }).attr('stroke', "black").attr('stroke-width', "1px");
-
-    // Specify where to put label of text
-    svg.append("text").attr({
-       id: "t" + Math.round(d.x) + "-" + Math.round(d.y) + "-" + i,  // Create an id for text so we can select it later for removing on mouseout
-        x: function() { return xScale(d.x) - 30; },
-        y: function() { return yScale(d.y) - 15; },
-    })
-    
-    .text(function() {
-      return [Math.round(d.x), Math.round(d.y)];  // Value of the text
-    });
+  tsnePROJ = tsne.getSolution(); // Y is an array of 2-D points that you can plot
+  console.log(tsnePROJ);
 }
-
-var handleMouseOut = function(d, i) {
-  // Use D3 to select element, change color back to normal
-  d3.select(this).attr({
-    fill: dataset.color,
-    r: dataset.radius
-  }).attr('stroke', "none");
-
-  // Select text by id and then remove
-  d3.select("#t" + Math.round(d.x) + "-" + Math.round(d.y) + "-" + i).remove();  // Remove text location
-}
-
-// define a function to do the plotting to avoid code redundancy
-var updateChart = function() {
-  // Update scale domains. 
-  // redefining the x and y minimums and maximums 
-  xScale.domain([
-    d3.min(dataset.points, function(d) {  // return minimum x value
-      return d.x;
-    }),                                   
-    d3.max(dataset.points, function(d) { // return maximum x value
-      return d.x;
-    })
-  ]);
-  yScale.domain([
-    d3.min(dataset.points, function(d) {  // return minimum y value
-      return d.y;
-    }),
-    d3.max(dataset.points, function(d) {  // return maximum y value
-      return d.y;
-    })
-  ]);
-
-  // here's the d3 magic
-  // this basically primes the svg to do stuff with <circle> tags
-
-  // d3 does inventory and figures out how many <circle> tags currently exist in svg.
-  var d3Circles = svg.selectAll('circle')
-    .data(dataset.points);  // rebind dataset.points just in case it's been updated
-
-  // if there aren't enough circle tags, .enter().append() creates new ones for the data points
-  d3Circles.enter().append('circle')
-    .attr('cx', function(d) {
-      return xScale(0);           // initialize circle at origin 
-    }).attr('cy', function(d) {
-      return yScale(0);           // initialize circle at origin
-    })
-    .on("mouseover", handleMouseOver) // bind mouse-over event to each circle
-    .on("mouseout", handleMouseOut);  // bind mouse-off event to each circle
-    
-  // exit().remove() will trash extra circles for us if we have too many
-  d3Circles.exit()                // get svg elements we need to remove
-    .transition()                 // default transition
-    .attr('cx', function(d) {
-      return xScale(0);           // initialize circle at origin 
-    }).attr('cy', function(d) {
-      return yScale(0);           // initialize circle at origin
-    }).remove()                   // get rid of em
-    
-
-  // update circle locations, both new and old with fancy transitions 
-  d3Circles
-    .attr('fill', dataset.color)    // make dots purple by default
-    
-    // bind quick transition to visually indicate dots are going to change
-    .transition()                   // start transition
-    .duration(250)                  // 250 ms
-    .ease('linear')                 // one type of 'transition acceleration'. linear
-    .attr('r', dataset.radius / 2)  // make radius smaller
-    .attr('fill', "gray")           // make dots gray by default
-    
-    
-    // move the points using a different transition
-    .transition()                   // start transition
-    .duration(1500)                 // 1.5 seconds
-    .ease('bounce')                 // bounce 'transition acceleration'.
-    .attr('cx', function(d) {
-      return xScale(d.x);           // move circle to new x coordinates 
-    }).attr('cy', function(d) {
-      return yScale(d.y);           // move circle to new y coordinates
-    })
-    
-    // finish up by transitioning circles back to original color and size
-    .transition()
-    .duration(250)
-    .ease('elastic')
-    .attr('r', dataset.radius)
-    .attr('fill', dataset.color)
-    
-  // update axes to represent new values
-  svg.select('.xAxis')
-    .transition()
-    .duration(1000)
-    .call(xAxis);
-
-  svg.select('.yAxis')
-    .transition()
-    .duration(1000)
-    .call(yAxis);
-}
-
-// run updateChart to plot initial set of points
-updateChart();                    
-
-*/

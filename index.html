@@ -34,7 +34,7 @@
 </div>
 <br>
 
-
+<div id="left" style="display:inline; float: left;">
 <div style="display:inline">
   <input type="file" class="fileInput" id="real-file" hidden="hidden" multiple="true"/>
   <button type="button" class="btn-light" id="chooseFile-button">Upload Your Files</button>
@@ -60,10 +60,10 @@
     <p id="cal-display-type-text" style="display:inline">Year View</p>
   </div>
 
-  <div class="rangeSelection-container" style="display:inline">
+  <div class="Selection-container" style="display:inline">
       <label class="check"> 
         <input type="checkbox" id="range-select" onclick=rangeSelect()>
-        <span class="rangeSelection-text">Range Selection</span>
+        <span class="Selection-text">Range Selection</span>
       </label>
   </div>
 
@@ -87,50 +87,6 @@
     <option value="Fat">Fat</option>
   </select>
 </div>
-
-<div class="select-box" style="display:inline; margin-left: 350px;">
-  <label>Choose X value
-  <select id="myList_1">
-    <option value="Body-Weight">Body: Weight</option>
-    <option value="Body-BMI">Body: BMI</option>
-    <option value="Body-Fat">Body: Fat</option>
-    <option value="Foods-Calories In">Foods: Calories In</option>
-    <option value="Activities-Calories Burned">Activities: Calories Burned</option>
-    <option value="Activities-Steps">Activities: Steps</option>
-    <option value="Activities-Distance">Activities: Distance</option>
-    <option value="Activities-Floors">Activities: Floors</option>
-    <option value="Activities-Minutes Sedentary">Activities: Minutes Sedentary</option>
-    <option value="Activities-Minutes Lightly Active">Activities: Minutes Lightly Active</option>
-    <option value="Activities-Minutes Fairly Active">Activities: Minutes Fairly Active</option>
-    <option value="Activities-Minutes Very Active">Activities: Minutes Very Active</option>
-    <option value="Activities-Activity Calories">Activities: Activity Calories</option>
-    <option value="Sleep-Minutes Asleep">Sleep: Minutes Asleep</option>
-    <option value="Sleep-Minutes Awake">Sleep: Minutes Awake</option>
-  </select>
-</label>
-</div>
-
-<div class="select-box" style="display:inline">
-  <label>Choose Y value
-  <select id="myList_2">
-    <option value="Body-Weight">Body: Weight</option>
-    <option value="Body-BMI">Body: BMI</option>
-    <option value="Body-Fat">Body: Fat</option>
-    <option value="Foods-Calories In">Foods: Calories In</option>
-    <option value="Activities-Calories Burned">Activities: Calories Burned</option>
-    <option value="Activities-Steps">Activities: Steps</option>
-    <option value="Activities-Distance">Activities: Distance</option>
-    <option value="Activities-Floors">Activities: Floors</option>
-    <option value="Activities-Minutes Sedentary">Activities: Minutes Sedentary</option>
-    <option value="Activities-Minutes Lightly Active">Activities: Minutes Lightly Active</option>
-    <option value="Activities-Minutes Fairly Active">Activities: Minutes Fairly Active</option>
-    <option value="Activities-Minutes Very Active">Activities: Minutes Very Active</option>
-    <option value="Activities-Activity Calories">Activities: Activity Calories</option>
-    <option value="Sleep-Minutes Asleep">Sleep: Minutes Asleep</option>
-    <option value="Sleep-Minutes Awake">Sleep: Minutes Awake</option>
-  </select>
-</label>
-</div>
 <br>
 <br>
  
@@ -138,12 +94,64 @@
   <div id="cal-heatmap"></div>
 </div>
 
-<div id="scatterplot" style="height: 400px; width: 800px; float: right; margin-right: 60px;"></div>
+</div>
 
-<!--
-<div id="scatterplot" style="display:inline; margin-right: 200px; float: right;"></div>
-<br>
--->
+<div id="right" style="display:inline; float: right;">
+  <label>Choose X-Axis</label>
+  <label style="margin-left: 170px;">Choose Y-Axis</label>
+  <br>
+  <div class="select-box" style="display:inline;">
+
+    <select id="myList_1">
+      <option value="Body-Weight">Body: Weight</option>
+      <option value="Body-BMI">Body: BMI</option>
+      <option value="Body-Fat">Body: Fat</option>
+      <option value="Foods-Calories In">Foods: Calories In</option>
+      <option value="Activities-Calories Burned">Activities: Calories Burned</option>
+      <option value="Activities-Steps">Activities: Steps</option>
+      <option value="Activities-Distance">Activities: Distance</option>
+      <option value="Activities-Floors">Activities: Floors</option>
+      <option value="Activities-Minutes Sedentary">Activities: Minutes Sedentary</option>
+      <option value="Activities-Minutes Lightly Active">Activities: Minutes Lightly Active</option>
+      <option value="Activities-Minutes Fairly Active">Activities: Minutes Fairly Active</option>
+      <option value="Activities-Minutes Very Active">Activities: Minutes Very Active</option>
+      <option value="Activities-Activity Calories">Activities: Activity Calories</option>
+      <option value="Sleep-Minutes Asleep">Sleep: Minutes Asleep</option>
+      <option value="Sleep-Minutes Awake">Sleep: Minutes Awake</option>
+    </select>
+  </div>
+  
+  <div class="select-box" style="display:inline">
+    <select id="myList_2">
+      <option value="Body-Weight">Body: Weight</option>
+      <option value="Body-BMI">Body: BMI</option>
+      <option value="Body-Fat">Body: Fat</option>
+      <option value="Foods-Calories In">Foods: Calories In</option>
+      <option value="Activities-Calories Burned">Activities: Calories Burned</option>
+      <option value="Activities-Steps">Activities: Steps</option>
+      <option value="Activities-Distance">Activities: Distance</option>
+      <option value="Activities-Floors">Activities: Floors</option>
+      <option value="Activities-Minutes Sedentary">Activities: Minutes Sedentary</option>
+      <option value="Activities-Minutes Lightly Active">Activities: Minutes Lightly Active</option>
+      <option value="Activities-Minutes Fairly Active">Activities: Minutes Fairly Active</option>
+      <option value="Activities-Minutes Very Active">Activities: Minutes Very Active</option>
+      <option value="Activities-Activity Calories">Activities: Activity Calories</option>
+      <option value="Sleep-Minutes Asleep">Sleep: Minutes Asleep</option>
+      <option value="Sleep-Minutes Awake">Sleep: Minutes Awake</option>
+    </select>
+  </div>
+  
+  <div class="Selection-container" style="display:inline">
+    <label class="check"> 
+      <input type="checkbox" id="tsne-select" onclick=tsneGenerate()>
+      <span class="Selection-text">Generate tSNE</span>
+    </label>
+  </div>
+  <br>
+  <br>
+
+  <div id="scatterplot" style="height: 400px; width: 800px; float: right;"></div>
+</div>
 
 <br>
 
@@ -154,6 +162,7 @@
 <script src= "static/js/heatmap_cal.js"> </script>
 <script src= "static/js/fileInput.js"> </script>
 <script src= "static/js/dropdown.js"> </script>
+<script src= "static/js/tsne.js"> </script>
 
 
 </html>
