@@ -1,3 +1,5 @@
+//script to change the value of the dropdown menus
+
 $(document).ready(function() {
 
     $("#datatype").change(function() {

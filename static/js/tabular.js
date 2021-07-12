@@ -1,21 +1,22 @@
-var data = [];
-var highlight = [];
-var selected = [];
-var datatype, datatype_x, datatype_y;
-var attribute, attribute_x, attribute_y;
-var cal_data = {};
-var scatter_data = [];
-var date_array = [];
-var range = 12;
-var cellSize = 10;
-var startDate = "-select-", endDate = "-select-";
-var leg1=20, leg2=40, leg3=60, leg4=80;
-var dataTable = [];
-var tsnePROJ = [];
+var data = [];    //array that holds the file contents line by line
+var highlight = [];    //array that has the points to be highlighted in Cal-Heatmap
+var datatype, datatype_x, datatype_y;   //values of the dropdowns
+var attribute, attribute_x, attribute_y;    //values of the dropdowns
+var cal_data = {};    //data for the Cal-Heatmap
+var scatter_data = [];    //data for the Scatterplot
+var date_array = [];    //array that holds all dates in order
+var range = 12;   //month range for the Cal-Heatmap
+var cellSize = 10;    //cellSize for the Cal-Heatmap
+var startDate = "-select-", endDate = "-select-";   //values for the RangeSelection
+var leg1=20, leg2=40, leg3=60, leg4=80;   //dynamic legend of the Cal-Heatmap
+var dataTable = [];   //DataTable that has all values for the tSNE projection
+var tsnePROJ = [];    //tsnePROJ array values
 
+//generate empty heatmap
 var cal = new CalHeatMap();;
 generate_heatmap();
 
+//Parser that reads all the uploaded files at once
 const fileInput = document.getElementById("real-file");
 fileInput.addEventListener('change', () => {
 for(var i = 0; i < fileInput.files.length; i++){
@@ -26,7 +27,7 @@ for(var i = 0; i < fileInput.files.length; i++){
     step: function(row) {
       data.push(row.data);
     },
-    complete: function(results) {
+    complete: function(results) {   //funtion on completion of the data parsing
       console.log(data);
       read_dropdown();
       cal_data = {};
@@ -39,6 +40,7 @@ for(var i = 0; i < fileInput.files.length; i++){
 }
 });
 
+//execute when the datatype dropdown changes
 document.getElementById("datatype").addEventListener('change', function() {
   read_dropdown();
   cal_data = {};
@@ -47,6 +49,7 @@ document.getElementById("datatype").addEventListener('change', function() {
   generate_heatmap();
 });
 
+//execute when the attribute dropdown changes
 document.getElementById("attribute").addEventListener('change', function() {
   read_dropdown();
   cal_data = {};
@@ -55,6 +58,7 @@ document.getElementById("attribute").addEventListener('change', function() {
   generate_heatmap();
 });
 
+//execute when the reset button is clicked
 const resetBtn = document.getElementById("reset-button");
 resetBtn.addEventListener("click", function() {
   data = [];
@@ -62,13 +66,14 @@ resetBtn.addEventListener("click", function() {
   iterate();
   cal = cal.destroy();
   generate_heatmap();
+  resetSelection();
   scatter_data = [];
   create_scatter();
 });
 
+//function when resetSelection button is clicked
 function resetSelection() {
   highlight = [];
-  selected = [];
   cal = cal.destroy();
   generate_heatmap();
 
@@ -84,11 +89,13 @@ function resetSelection() {
   }
 }
 
+//function that reads the dropdown of datatype and attribute
 function read_dropdown() {
   datatype = document.getElementById("datatype").value;
   attribute = document.getElementById("attribute").value;
 }
 
+//function that iterates through the data array in search of values for Cal-Heatmap
 function iterate() {
   var i, j;
   var k=0;
@@ -124,6 +131,7 @@ function iterate() {
     k=i+1;
   }
 
+  //Creating the legend range dynamically
   var obj = Object.keys(cal_data).map(function(key) { return cal_data[key];});
   var min = Math.min.apply( null, obj );
   var max = Math.max.apply( null, obj );
@@ -136,6 +144,7 @@ function iterate() {
 
 }
 
+//function to generate the heatmap
 function generate_heatmap() {
   cal = new CalHeatMap();
 	cal.init({
@@ -154,7 +163,7 @@ function generate_heatmap() {
   label: {
 		width: 210
 	},
-  onClick: function(date, nb) {
+  onClick: function(date, nb) {   //function when cell is clicked on Cal-Heatmap
     if (document.querySelector('#range-select:checked') !== null) {
       
       if (startDate == "-select-") {
@@ -196,6 +205,7 @@ function generate_heatmap() {
   });
 }
 
+//function to changeCalDisplay between month view and year view
 function changeCalDisplay() {
   var checkBox = document.getElementById("cal-display-type");
   var displayText = document.getElementById("cal-display-type-text");
@@ -217,6 +227,7 @@ function changeCalDisplay() {
   generate_heatmap();
 }
 
+//function to execute when rangeselect is clicked
 function rangeSelect() {
   if (document.querySelector('#range-select:checked') == null) {
 
@@ -225,12 +236,14 @@ function rangeSelect() {
   }
 }
 
+//to add 1 day to a date object
 Date.prototype.addDays = function(days) {
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
 }
 
+//function to highlight the selected range as well as highlight coresponding points in Scatterplot
 function highlightSelected() {
   var start = startDate.split("-");
   var end = endDate.split("-");
@@ -256,6 +269,7 @@ function highlightSelected() {
 
 /*------------------*/
 
+//function to read the scatterplot dropdowns
 function read_scatter_dropdown() {
   var xDropdown = document.getElementById("myList_1").value.split("-");
   datatype_x = xDropdown[0];
@@ -265,6 +279,7 @@ function read_scatter_dropdown() {
   attribute_y = yDropdown[1];
 }
 
+//function that iterates through the data array in search of values for Scatterplot
 function iterate_scatter(datatype, attribute) {
   var i, j;
   var k=0;
@@ -304,6 +319,7 @@ function iterate_scatter(datatype, attribute) {
 
 }
 
+//function that merges the x and y axix values to create Scatterpoints
 function generateScatterPoints(x_array, y_array) {
   scatter_data = [];
   for (var i = 0; i < x_array.length; i++) {
@@ -311,18 +327,21 @@ function generateScatterPoints(x_array, y_array) {
   }
 }
 
+//execute when the myList_1 dropdown changes
 document.getElementById("myList_1").addEventListener('change', function() {
   generate_scatterplot();
   resetSelection();
   document.getElementById("tsne-select").checked = false;
 });
 
+//execute when the myList_2 dropdown changes
 document.getElementById("myList_2").addEventListener('change', function() {
   generate_scatterplot();
   resetSelection();
   document.getElementById("tsne-select").checked = false;
 });
 
+//function to generate the scatterplot
 function generate_scatterplot() {
   read_scatter_dropdown();
   var x_array = iterate_scatter(datatype_x, attribute_x);
@@ -373,6 +392,7 @@ function unselectByClick() {
   }
 }
 
+//function to highlight the point in the scatterplot
 function highlightScatter(selected) {
   var chart = $('#scatterplot').highcharts();
   var points = chart.series[0].data;
@@ -388,6 +408,7 @@ function highlightScatter(selected) {
   }
 }
 
+//function to create the Scatterplot
 function create_scatter() {
 Highcharts.chart('scatterplot', {
 
@@ -423,6 +444,7 @@ create_scatter();
 
 /*    TSNE GENERATION   */
 
+//function to generate the tSNE on the Scatterplot
 function tsneGenerate() {
   if (document.querySelector('#tsne-select:checked') == null) {
     generate_scatterplot();
@@ -439,6 +461,7 @@ function tsneGenerate() {
   }
 }
 
+//function to create the tSNE dataTable of values
 function iterate_tsne() {
   var i, j;
   var k=0, l=0;
@@ -483,6 +506,7 @@ function iterate_tsne() {
   
 }
 
+//function to get the tSNE parameters from the dataTable
 function tsneDraw() {
   // ################################################################
   //tsne -similarity  // length of data table 

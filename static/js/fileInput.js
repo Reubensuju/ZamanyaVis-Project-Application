@@ -1,3 +1,5 @@
+//script to activate the upload function
+
 const realFileBtn = document.getElementById("real-file");
 const chooseFileBtn = document.getElementById("chooseFile-button");
 const customTxt = document.getElementById("custom-text");
