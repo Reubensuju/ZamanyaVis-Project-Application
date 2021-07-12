@@ -42,7 +42,7 @@ Finally, to launch the server, type the command:
 
 Your prompt must look like this:
 
-![](/image/sample.png "Server Prompt.")
+![](/images/server_prompt.png "Server Prompt.")
 
 Open the URL at which the application is being served.
 In this case: http://192.168.56.1:8080
@@ -54,11 +54,11 @@ For More details on how to setup a server using Node.js, please follow the instr
 ## Application Loading    <a name="applicationLoading"></a>
 The Dashboard Home Screen looks like this
 
-![](/image/sample.png "Dashboard Home.")
+![](/images/dashboard_home.png "Dashboard Home.")
 
 Click the “Upload your Files” button, and upload all your downloaded files at once
 
-![](/image/sample.png "File Upload.")
+![](/images/file_upload.png "File Upload.")
 
 Your Dashboard will be fully loaded with your data.
 
